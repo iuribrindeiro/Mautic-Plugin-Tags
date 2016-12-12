@@ -18,6 +18,12 @@ class LeadSubscriber extends CommonSubscriber
 
     public function onAddTagToLead(LeadEvent $events)
     {
+        $idCliente = $this->request->query->get('idCliente');
+
+        if($idCliente) {
+            return;
+        }
+
         $changes = $events->getChanges();
 
         if(isset($changes['tags'])) {

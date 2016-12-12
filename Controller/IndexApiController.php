@@ -18,14 +18,14 @@ class IndexApiController extends CommonApiController
         $this->model            = $this->getModel('lead.lead');
     }
 
-    public function removeTagAction($contactId)
+    public function removeTagAction($idCliente)
     {
         $tagName = $this->request->request->get('tagName');
         /** @var LeadModel $leadModel */
         $leadModel = $this->model;
 
         /** @var Lead $entityLead */
-        $entityLead = $leadModel->getRepository()->findOneBySlugs('idcliente', $contactId);
+        $entityLead = $leadModel->getRepository()->findOneBySlugs('idcliente', $idCliente);
 
         if(!$tagName || $entityLead === null) {
             return $this->notFound();
@@ -62,14 +62,15 @@ class IndexApiController extends CommonApiController
         return $this->notFound();
     }
 
-    public function addTagAction($contactId)
+    public function addTagAction($idCliente)
     {
         $tagName = $this->request->request->get('tagName');
         /** @var LeadModel $leadModel */
         $leadModel = $this->model;
 
+        $leadId = $leadModel->getRepository()->getLeadIdsByUniqueFields(['idcliente' => $idCliente]);
         /** @var Lead $entityLead */
-        $entityLead = $leadModel->getEntity((int) $contactId);
+        $entityLead = $leadModel->getEntity(reset($leadId)['id']);
 
         if(!$tagName || $entityLead === null) {
             return $this->notFound();
@@ -84,8 +85,9 @@ class IndexApiController extends CommonApiController
 
         $entityLead->addTag($tag);
 
+
         $leadModel->saveEntity($entityLead);
-        $view = $this->view([$this->entityNameOne => $entityLead]);
+        $view = $this->view(['result' => 'true']);
 
         return $this->handleView($view);
     }

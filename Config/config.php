@@ -9,12 +9,12 @@ return [
     'routes' => [
         'api' => [
             'mautic_api_addtag' => [
-                'path' => 'contacts/tags/add/{contactId}',
+                'path' => 'contacts/tags/add/{idCliente}',
                 'controller' => 'ContactTagsApiBundle:IndexApi:addTag',
                 'method' => 'POST'
             ],
             'mautic_api_removetag' => [
-                'path' => 'contacts/tags/remove/{contactId}',
+                'path' => 'contacts/tags/remove/{idCliente}',
                 'controller' => 'ContactTagsApiBundle:IndexApi:removeTag',
                 'method' => 'POST'
             ],
