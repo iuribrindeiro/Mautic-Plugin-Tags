@@ -19,9 +19,14 @@ return [
                 'method' => 'POST'
             ],
             'mautic_api_newtag' => [
-                'path' => 'tags/new/{tagName}',
+                'path' => 'tags/new',
                 'controller' => 'ContactTagsApiBundle:IndexApi:newTag',
-                'method' => 'GET'
+                'method' => 'POST'
+            ],
+            'mautic_api_deletetag' => [
+                'path' => 'tags/delete',
+                'controller' => 'ContactTagsApiBundle:IndexApi:deleteTag',
+                'method' => 'POST'
             ]
         ]
     ],

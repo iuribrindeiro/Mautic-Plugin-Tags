@@ -24,8 +24,9 @@ class IndexApiController extends CommonApiController
         /** @var LeadModel $leadModel */
         $leadModel = $this->model;
 
+        $leadId = $leadModel->getRepository()->getLeadIdsByUniqueFields(['idcliente' => $idCliente]);
         /** @var Lead $entityLead */
-        $entityLead = $leadModel->getRepository()->findOneBySlugs('idcliente', $idCliente);
+        $entityLead = $leadModel->getEntity(reset($leadId)['id']);
 
         if(!$tagName || $entityLead === null) {
             return $this->notFound();
@@ -41,25 +42,9 @@ class IndexApiController extends CommonApiController
         $entityLead->removeTag($tag);
 
         $leadModel->saveEntity($entityLead);
-        $view = $this->view([$this->entityNameOne => $entityLead]);
+        $view = $this->view(['result' => true]);
 
         return $this->handleView($view);
-    }
-
-    public function newTagAction($tagName)
-    {
-        /** @var LeadModel $leadModel */
-        $leadModel = $this->model;
-
-        if(!empty(trim($tagName))) {
-            $objTag = new Tag();
-            $objTag->setTag(InputHelper::clean($tagName));
-            $leadModel->getTagRepository()->saveEntity($objTag);
-
-            return $this->handleView($this->view(['result' => true]));
-        }
-
-        return $this->notFound();
     }
 
     public function addTagAction($idCliente)
@@ -90,5 +75,45 @@ class IndexApiController extends CommonApiController
         $view = $this->view(['result' => 'true']);
 
         return $this->handleView($view);
+    }
+
+    public function newTagAction()
+    {
+        $tagName = $this->request->request->get('tagName');
+        /** @var LeadModel $leadModel */
+        $leadModel = $this->model;
+
+        if(!empty(trim($tagName))) {
+            $objTag = new Tag();
+            $objTag->setTag(InputHelper::clean($tagName));
+            $leadModel->getTagRepository()->saveEntity($objTag);
+
+            return $this->handleView($this->view(['result' => true]));
+        }
+
+        return $this->notFound();
+    }
+
+    public function deleteTagAction()
+    {
+        $tagName = $this->request->request->get('tagName');
+        /** @var LeadModel $leadModel */
+        $leadModel = $this->model;
+
+        if(!empty(trim($tagName))) {
+            $objTag = $leadModel->getTagRepository()->findOneBy(['tag' => $tagName]);
+
+            if($objTag) {
+                try{
+                    $leadModel->getTagRepository()->deleteEntity($objTag);
+                }catch (\Exception $ex) {
+                    return $this->handleView($this->view(['result' => false]));
+                }
+            }
+
+            return $this->handleView($this->view(['result' => true]));
+        }
+
+        return $this->notFound();
     }
 }
