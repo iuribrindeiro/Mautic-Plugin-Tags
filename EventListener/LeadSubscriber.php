@@ -18,6 +18,9 @@ class LeadSubscriber extends CommonSubscriber
 
     public function onAddTagToLead(LeadEvent $events)
     {
+        if(!$this->request) {
+            return false;
+        }
         $route = $this->request->get('_route');
         $host = $this->request->getHost();
 
